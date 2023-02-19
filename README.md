@@ -1,6 +1,20 @@
-# xumm-ts TypeScript Code Samples for XUMM &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)]
+# xumm-ts TypeScript Code Samples for XUMM &middot; ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 
 This is an open source, public repository by TalentChain, providing code samples in TypeScript for XRPL community to interact, connect with XUMM, a XRPL supported wallet.
+
+## Setting Up this Repository
+
++ **[Node.js](https://nodejs.org/)** must be installed on the machine to run the code snippets. 
+
+
+In the root directory of this project, execute the following command:
+
+```
+$ npm install --save
+```
+
+### All features are available as typeScript functions in the ```src/index.ts``` file.
+
 
 # Code Samples
 

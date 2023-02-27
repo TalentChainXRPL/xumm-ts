@@ -49,10 +49,10 @@ If ping is successful, we can interact with xumm.
 ```ts
 import { XummSdk } from 'xumm-sdk';
 import { verifySignature } from 'verify-xrpl-signature';
-import { ApplicationDetails } from "xumm-sdk/dist/src/types";
+import { ApplicationDetails } from 'xumm-sdk/dist/src/types';
 
 class Wallet {
-  // Method to get user's uuid for sign-in transaction
+	// Method to get user's uuid for sign-in transaction
 	private signinListener = async (event) => {
 		if (event.data.signed === true) {
 			return event.data;
@@ -61,48 +61,47 @@ class Wallet {
 		}
 	};
 
-  // Method to listen for "payload_uuidv4"
-  private listenToSigninEvent = (payload_uuid) => {
-    const url = `wss://xumm.app/sign/${payload_uuid}`;
-    const connection = new WebSocket(url);
+	// Method to listen for "payload_uuidv4"
+	private listenToSigninEvent = (payload_uuid) => {
+		const url = `wss://xumm.app/sign/${payload_uuid}`;
+		const connection = new WebSocket(url);
 
-    connection.onopen = () => {
-      connection.send('Message From Client');
-    };
+		connection.onopen = () => {
+			connection.send('Message From Client');
+		};
 
-    connection.onerror = (error) => {
-      // An error occurred!
-    };
+		connection.onerror = (error) => {
+			// An error occurred!
+		};
 
-    connection.onmessage = (e) => {
-      const object: any = JSON.parse(e.data.toString());
-      if ('payload_uuidv4' in object) {
-        this.getUserToken(object.payload_uuidv4);
-        connection.close();
-      }
-    };
-  };
+		connection.onmessage = (e) => {
+			const object: any = JSON.parse(e.data.toString());
+			if ('payload_uuidv4' in object) {
+				this.getUserToken(object.payload_uuidv4);
+				connection.close();
+			}
+		};
+	};
 
-  // Method to check if transaction was signed or not
-  private getUserToken = async (uuid: string) => {
-    const result = await xummSdk.payload.get(uuid);
+	// Method to check if transaction was signed or not
+	private getUserToken = async (uuid: string) => {
+		const result = await xummSdk.payload.get(uuid);
 
-    try {
-      if (
-        result.meta.signed &&
-        result.meta.resolved &&
-        !!result.response.hex &&
-        !!result.response.account
-      ) {
-        if (
-          this.verifySigninTransaction(
-            result.response.hex,
-            result.response.account,
-          )
-        ) {
-          // User logged in successfully 
-
-          /*
+		try {
+			if (
+				result.meta.signed &&
+				result.meta.resolved &&
+				!!result.response.hex &&
+				!!result.response.account
+			) {
+				if (
+					this.verifySigninTransaction(
+						result.response.hex,
+						result.response.account
+					)
+				) {
+					// User logged in successfully
+					/*
           Following are key values to take from "result" object
 
           1) result.response.account (XRPL wallet address that signed the transaction on XUMM)
@@ -110,27 +109,26 @@ class Wallet {
           3) result.payload.expires_at, (XUMM token expiry)
 
           */
+				} else {
+					// Sign-in attempt falied because transaction signature didn't validate
+				}
+			} else {
+				// Sign-in attempt falied because user cancelled or declined the transaction
+			}
+		} catch (error) {
+			// Handle error
+		}
+	};
 
-        } else {
-          // Sign-in attempt falied because transaction signature didn't validate
-        }
-      } else {
-        // Sign-in attempt falied because user cancelled or declined the transaction
-      }
-    } catch (error) {
-      // Handle error
-    }
-  };
+	// Method to verify transaction signature
+	private verifySigninTransaction = (tx: string, address: string): boolean => {
+		const response = verifySignature(tx);
+		return true
+			? response.signedBy === address && response.signatureValid
+			: false;
+	};
 
-  // Method to verify transaction signature
-  private verifySigninTransaction = (tx: string, address: string): boolean => {
-    const response = verifySignature(tx);
-    return true
-      ? response.signedBy === address && response.signatureValid
-      : false;
-  };
-
-  // Main "Sign In" method
+	// Main "Sign In" method
 	public signIn = () => {
 		const pingResponse: Promise<ApplicationDetails> = await xummSdk.ping();
 
@@ -143,20 +141,19 @@ class Wallet {
 				this.signinListener // Event listener above
 			);
 
-      if (!subscription) {
-        return {
-        success: false,
-        qrCode: '',
-      }
-      } else {
-
-      }
+			if (!subscription) {
+				return {
+					success: false,
+					qrCode: '',
+				};
+			} else {
+			}
 		} else {
-      return {
-        success: false,
-        qrCode: '',
-      }
-    }
+			return {
+				success: false,
+				qrCode: '',
+			};
+		}
 	};
 }
 ```
